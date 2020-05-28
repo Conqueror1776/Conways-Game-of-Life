@@ -3,7 +3,7 @@ import curses
 
 
 def pbar(window):
-    curses.curs_set(0)
+    curses.curs_set()
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     for i in range(10):

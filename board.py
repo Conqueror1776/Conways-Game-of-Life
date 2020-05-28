@@ -7,16 +7,51 @@ class Board:
     def __init__(self, odds):
         self.window = curses.initscr()
         self.rows, self.col = self.window.getmaxyx()
-        self.grid = [[Cell() for i in range(self.col)] for j in range(self.rows)]
-
+        self.grid = [[0 for i in range(self.col)] for j in range(self.rows)]
         self._initiate_random_board(odds)
+        for i in range(33):
+            self.draw_board()
+            self.update_board_normal()
+        curses.endwin()
 
     def _initiate_random_board(self, odds):
-        for i in self.grid:
-            for j in i:
+        for i in range(self.rows):
+            for j in range(self.col):
                 random_int = randint(0, odds)
                 if (random_int == 1):
-                    j.set_alive()
+                    self.grid[i][j] = 1
+
+    def check_neighbors(self, r, c):
+        count = 0;
+        if (self.grid[(r - 1)%self.rows][c] == 1):
+            count+= 1
+        if (self.grid[(r + 1)%self.rows][c] == 1):
+            count+= 1
+        if (self.grid[r][(c - 1)%self.col] == 1):
+            count+= 1
+        if (self.grid[r][(c + 1)%self.col] == 1):
+            count+= 1
+
+        if (self.grid[(r - 1)%self.rows][(c - 1)%self.rows] == 1):
+            count+= 1
+        if (self.grid[(r + 1)%self.rows][(c + 1)%self.rows] == 1):
+            count+= 1
+        if (self.grid[(r - 1)%self.rows][(c + 1)%self.col] == 1):
+            count+= 1
+        if (self.grid[(r + 1)%self.rows][(c - 1)%self.col] == 1):
+            count+= 1
+        return count
+
+    def update_board_normal(self):
+        for i in range(self.rows):
+            for j in range(self.col):
+                total = self.check_neighbors(i, j)
+                if (total < 2):
+                    self.grid[i][j] = 0
+                if (total == 3):
+                    self.grid[i][j] = 1
+                if (total > 3):
+                    self.grid[i][j] = 0
 
     def draw_board(self):
         curses.start_color()
@@ -24,14 +59,11 @@ class Board:
 
         for i in range(self.rows - 1):
             for j in range(self.col):
-                if (self.grid[i][j].alive):
+                if (self.grid[i][j] == 1):
                     self.window.attron(curses.color_pair(1))
                     self.window.addstr(i,j,' ')
                     self.window.attroff(curses.color_pair(1))
+                else:
+                    self.window.addstr(i,j,' ')
         self.window.refresh()
-        time.sleep(1)
-        curses.endwin()
-
-
-thing = Board(5)
-thing.draw_board()
+        time.sleep(.1)
