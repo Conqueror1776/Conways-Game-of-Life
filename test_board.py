@@ -1,6 +1,7 @@
 from board import Board
 import unittest
 
+# Test class to make sure the rules are followed properly
 class TestBoard(unittest.TestCase):
 
     def test_check_neighbors(self):
