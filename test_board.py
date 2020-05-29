@@ -18,7 +18,6 @@ class TestBoard(unittest.TestCase):
         test.rows = 3
         test.col = 3
         test.update_board_normal()
-        print(test.grid)
         self.assertEqual(test.grid[1][1], 0, "update_board_normal() does not function")
 
     def test_update_again(self):

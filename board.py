@@ -1,14 +1,14 @@
-from cell import Cell
 from random import randint
 import curses
 import time
+from copy import copy, deepcopy
 
 class Board:
     def __init__(self, odds, time):
         self.window = curses.initscr()
         self.rows, self.col = self.window.getmaxyx()
         self.grid = [[0 for i in range(self.col)] for j in range(self.rows)]
-        self._initiate_glider_gun()
+        self._initiate_random_board(odds)
         for i in range(time):
             self.draw_board()
             self.update_board_normal()
@@ -30,35 +30,35 @@ class Board:
 
     def check_neighbors(self, r, c):
         count = 0;
-        if (self.grid[(r - 1)%self.rows][c] == 1):
+        if (self.grid[(r - 1) % self.rows][c] == 1):
             count+= 1
-        if (self.grid[(r + 1)%self.rows][c] == 1):
+        if (self.grid[(r + 1) % self.rows][c] == 1):
             count+= 1
-        if (self.grid[r][(c - 1)%self.col] == 1):
+        if (self.grid[r][(c - 1) % self.col] == 1):
             count+= 1
-        if (self.grid[r][(c + 1)%self.col] == 1):
+        if (self.grid[r][(c + 1) % self.col] == 1):
             count+= 1
 
-        if (self.grid[(r - 1)%self.rows][(c - 1)%self.col] == 1):
+        if (self.grid[(r - 1) % self.rows][(c - 1) % self.col] == 1):
             count+= 1
-        if (self.grid[(r + 1)%self.rows][(c + 1)%self.col] == 1):
+        if (self.grid[(r + 1) % self.rows][(c + 1) % self.col] == 1):
             count+= 1
-        if (self.grid[(r - 1)%self.rows][(c + 1)%self.col] == 1):
+        if (self.grid[(r - 1) % self.rows][(c + 1) % self.col] == 1):
             count+= 1
-        if (self.grid[(r + 1)%self.rows][(c - 1)%self.col] == 1):
+        if (self.grid[(r + 1) % self.rows][(c - 1) % self.col] == 1):
             count+= 1
         return count
 
     def update_board_normal(self):
-        temp = self.grid
+        temp = deepcopy(self.grid)
         for i in range(self.rows):
             for j in range(self.col):
                 total = self.check_neighbors(i, j)
-                if (total < 2):
+                if total < 2:
                     temp[i][j] = 0
-                if (total == 3):
+                if total == 3:
                     temp[i][j] = 1
-                if (total > 3):
+                if total > 3:
                     temp[i][j] = 0
         self.grid = temp
 
@@ -75,4 +75,4 @@ class Board:
                 else:
                     self.window.addstr(i,j,' ')
         self.window.refresh()
-        time.sleep(4)
+        time.sleep(.1)
